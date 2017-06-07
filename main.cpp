@@ -84,7 +84,7 @@ int main()
   
   timeBar.setFillColor(Color::Red);
   
-  timeBar.setPosition(1920 / 2 - timeBarStartWidth / 2, 980);
+  timeBar.setPosition(1920 / 2 - timeBarStartWidth / 2, 80);
   
   Time gameTimeTotal;
   
