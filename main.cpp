@@ -14,6 +14,16 @@ typedef struct mysprite
   
 } MySprite;
 
+void updateBranches( int seed );
+
+const int NUM_BRANCHES = 6;
+
+Sprite branches[NUM_BRANCHES];
+
+enum class side {LEFT, RIGHT, NONE};
+
+side branchPositions[NUM_BRANCHES];
+
 int main()
 {
   uint8_t c = 'c';
@@ -123,6 +133,53 @@ int main()
   scoreText.setPosition(20,20);
   messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
   
+  Texture textureBranch;
+  
+  textureBranch.loadFromFile("graphics/branch.png");
+  
+  for(int i = 0; i < NUM_BRANCHES; ++i)
+  {
+    branches[i].setTexture(textureBranch);
+    branches[i].setPosition(-2000,-2000);
+    branches[i].setOrigin(220,20);
+  }
+  
+  
+  Texture texturePlayer;
+  texturePlayer.loadFromFile("graphics/player.png");
+  Sprite spritePlayer;
+  spritePlayer.setTexture(texturePlayer);
+  spritePlayer.setPosition(580,720);
+  
+  side playerSide = side::LEFT;
+  
+  Texture textureRIP;
+  textureRIP.loadFromFile("graphics/rip.png");
+  Sprite spriteRIP;
+  spriteRIP.setTexture(textureRIP);
+  spriteRIP.setPosition(600,860);
+  
+  Texture textureAxe;
+  textureAxe.loadFromFile("graphics/axe.png");
+  Sprite spriteAxe;
+  spriteAxe.setTexture(textureAxe);
+  spriteAxe.setPosition(700,830);
+  
+  const float AXE_POSITION_LEFT = 700;
+  const float AXE_POSITION_RIGHT = 1075;
+  
+  Texture textureLog;
+  textureLog.loadFromFile("graphics/log.png");
+  Sprite spriteLog;
+  spriteLog.setTexture(textureLog);
+  spriteLog.setPosition(810,720);
+  
+  bool logActive = false;
+  float logSpeedX = 1000;
+  float logSpeedY = -1500;
+  
+  bool acceptInput = false;
+  
   while(window.isOpen())
   {
     
@@ -213,8 +270,27 @@ int main()
       std::stringstream ss;
       
       ss << "Score = " << score;
-      
-      scoreText.setString(ss.str());
+          
+      for(int i = 0; i < NUM_BRANCHES; ++i)
+      {
+	float height = i * 150;
+	
+	if (branchPositions[i] == side::LEFT)
+	{
+	  branches[i].setPosition(610, height);
+	  branches[i].setRotation(180);
+	}
+	else if (branchPositions[i] == side::RIGHT)
+	{
+	  branches[i].setPosition(1330, height);
+	  branches[i].setRotation(0);
+	}
+	else
+	{
+	  //hide the branch
+	  branches[i].setPosition(3000, height);
+	}
+      }
       
     }// !paused
     
@@ -233,6 +309,18 @@ int main()
       paused = false;
       score = 0;
       timeRemaining = 5;
+      
+      for (int i = 1; i < NUM_BRANCHES; ++i)
+      {
+	branchPositions[i] = side::NONE;
+      }
+      
+      spriteRIP.setPosition(675, 2000);
+      
+      spritePlayer.setPosition(580, 720);
+      
+      acceptInput= true;
+      
     }
     
     window.clear();
@@ -240,6 +328,20 @@ int main()
     window.draw(spriteBackGround);
     
     window.draw(spriteTree);
+    
+    
+    for (int i = 0; i < NUM_BRANCHES; ++i)
+    {
+      window.draw(branches[i]);
+    }
+    
+    window.draw(spritePlayer);
+    
+    window.draw(spriteAxe);
+    
+    window.draw(spriteLog);
+    
+    window.draw(spriteRIP);
     
     window.draw(spriteBee);
     
@@ -262,4 +364,30 @@ int main()
   
   std::cout << "MyTimber" << std::endl;
   return 0;
+}
+
+void updateBranches( int seed )
+{
+  //move branches up
+  for (int i = NUM_BRANCHES - 1; i > 0; --i)
+  {
+    branchPositions[i] = branchPositions[i-1];
+  }
+  
+  srand((int)time(0) + seed);
+  int r = (rand() % 5);
+  
+  switch(r)
+  {
+    case 0:
+      branchPositions[0] = side::LEFT;
+      break;
+    case 1:
+      branchPositions[0] = side::RIGHT;
+      break;
+    default:
+      branchPositions[0] = side::NONE;
+      break;
+  }
+  
 }
