@@ -292,7 +292,49 @@ int main()
 	}
       }
       
+      if(logActive)
+      {
+	spriteLog.setPosition(spriteLog.getPosition().x + (logSpeedX * deltaTime.asSeconds()), spriteLog.getPosition().y + (logSpeedY * deltaTime.asSeconds()));
+	if(spriteLog.getPosition().x < -100 || spriteLog.getPosition().x > 2000)
+	{
+	  logActive = false;
+	  spriteLog.setPosition(810, 720);
+	}
+      }
+      
+      if(branchPositions[5] == playerSide)
+      {
+	paused = true;
+	acceptInput =false;
+	
+	spriteRIP.setPosition(525, 760);
+	
+	spritePlayer.setPosition(2000, 660);
+	
+	messageText.setString("SQUISHED!!");
+	
+	FloatRect textRect = messageText.getLocalBounds();
+	
+	messageText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+	
+	messageText.setPosition(1920 / 2.0f , 1080 / 2.0f);
+	
+      }
+      
+      
     }// !paused
+    
+    Event event;
+    
+    while(window.pollEvent(event))
+    {
+      if(event.type == Event::KeyReleased && !paused)
+      {
+	acceptInput = true;
+	
+	spriteAxe.setPosition(2000, spriteAxe.getPosition().y);
+      }
+    }
     
     if(Keyboard::isKeyPressed(Keyboard::Escape))
     {
@@ -321,6 +363,54 @@ int main()
       
       acceptInput= true;
       
+    }
+    
+    if(acceptInput)
+    {
+      if(Keyboard::isKeyPressed(Keyboard::Right))
+      {
+	playerSide = side::RIGHT;
+	
+	++score;
+	
+	timeRemaining += (2 / score) + .15;
+	
+	spriteAxe.setPosition(AXE_POSITION_RIGHT, spriteAxe.getPosition().y);
+	
+	spritePlayer.setPosition(1200, 720);
+	
+	updateBranches(score);
+	
+	spriteLog.setPosition(810, 720);
+	
+	logSpeedX = -5000;
+	logActive = true;
+	
+	acceptInput = false;
+	
+      }
+      
+      if(Keyboard::isKeyPressed(Keyboard::Left))
+      {
+	playerSide = side::LEFT;
+	
+	++score;
+	
+	timeRemaining += (2 / score) + .15;
+	
+	spriteAxe.setPosition(AXE_POSITION_LEFT, spriteAxe.getPosition().y);
+	
+	spritePlayer.setPosition(580, 720);
+	
+	updateBranches(score);
+	
+	spriteLog.setPosition(810, 720);
+	logSpeedX = 5000;
+	logActive = true;
+	
+	acceptInput = false;
+	
+      }
     }
     
     window.clear();
