@@ -3,6 +3,7 @@
 #include <ctime>
 #include <sstream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 using namespace sf;
 
@@ -103,7 +104,7 @@ int main()
   float timeBarWidthPerSecond = timeBarStartWidth / timeRemaining;
   
   
-  bool paused = false;
+  bool paused = true;
   
   int score = 0;
   
@@ -180,6 +181,22 @@ int main()
   
   bool acceptInput = false;
   
+  
+  SoundBuffer chopBuffer;
+  chopBuffer.loadFromFile("sound/chop.wav");
+  Sound chop;
+  chop.setBuffer(chopBuffer);
+  
+  SoundBuffer deathBuffer;
+  deathBuffer.loadFromFile("sound/death.wav");
+  Sound death;
+  death.setBuffer(deathBuffer);
+  
+  SoundBuffer ootBuffer;
+  ootBuffer.loadFromFile("sound/out_of_time.wav");
+  Sound outOfTime;
+  outOfTime.setBuffer(ootBuffer);
+  
   while(window.isOpen())
   {
     
@@ -204,6 +221,9 @@ int main()
 	messageText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
 	
 	messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+	
+	outOfTime.play();
+	
       }
       
       for(int i = 0; i < 3; ++i)
@@ -270,6 +290,7 @@ int main()
       std::stringstream ss;
       
       ss << "Score = " << score;
+      scoreText.setString(ss.str());
           
       for(int i = 0; i < NUM_BRANCHES; ++i)
       {
@@ -318,6 +339,8 @@ int main()
 	messageText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
 	
 	messageText.setPosition(1920 / 2.0f , 1080 / 2.0f);
+	
+	death.play();
 	
       }
       
@@ -388,6 +411,7 @@ int main()
 	
 	acceptInput = false;
 	
+	chop.play();
       }
       
       if(Keyboard::isKeyPressed(Keyboard::Left))
@@ -409,6 +433,8 @@ int main()
 	logActive = true;
 	
 	acceptInput = false;
+	
+	chop.play();
 	
       }
     }

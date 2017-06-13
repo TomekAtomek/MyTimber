@@ -29,3 +29,5 @@ add_executable(MyTimber ${SOURCE_FILES})
 target_link_libraries (MyTimber sfml-graphics)
 target_link_libraries (MyTimber sfml-window)
 target_link_libraries (MyTimber sfml-system)
+target_link_libraries (MyTimber sfml-audio)
+
